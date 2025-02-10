@@ -1,0 +1,21 @@
+(defun rabin-karp (text pattern)
+  (let ((n (length text))
+        (m (length pattern))
+        (d 256)
+        (q 101)
+        (h (expt d (1- m)))
+        (p (hash-code pattern d))
+        (t (hash-code (subseq text 0 m) d)))
+    (loop for i from 0 below (1- n m)
+          with t-i := t
+          do (when (and (= t-i p)
+                        (equal (subseq text i (+ i m)) pattern))
+               (return i))
+               (setq t-i (+ (* t-i d) (char-code (elt text (+ i m))) (- (* (char-code (elt text i)) h))))
+    (values nil)))
+
+(defun hash-code (string base)
+  (loop for i from 0 below (length string)
+        with h := 0
+        do (incf h (* (char-code (elt string i)) (expt base i)))
+        finally (return h)))
